@@ -121,26 +121,26 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Проверяем существование файла (для отладки)
-      - name: Verify files exist
+      # Проверяем существование файлов
+      - name: Verify files
         run: |
           ls -la
-          ls -la infra/
-          test -f docker-compose.production.yml && echo "Production compose found" || echo "Using infra compose"
+          test -f infra/docker-compose.yml && echo "Compose file exists" || echo "Compose file missing"
 
-      # Копируем правильный файл
-      - name: Copy docker-compose to server
+      # Копируем docker-compose на сервер
+      - name: Copy compose file
         uses: appleboy/scp-action@v0.1.6
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: "infra/docker-compose.yml"  # Используем файл из папки infra
-          target: "~/foodgram/docker-compose.production.yml"  # Переименовываем при копировании
+          source: "infra/docker-compose.yml"
+          target: "/home/${{ secrets.USER }}/foodgram/"  # Полный путь к директории
           overwrite: true
 
-      - name: Deploy via SSH
+      # Деплоим приложение
+      - name: Deploy application
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.HOST }}
@@ -148,22 +148,23 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
-            cd ~/foodgram
-            echo "Current directory:"
-            pwd
-            ls -la
+            cd /home/${{ secrets.USER }}/foodgram
+            ls -la  # Проверяем содержимое директории
             
-            echo "Pulling images..."
-            sudo docker compose -f docker-compose.production.yml pull
+            # Переименовываем файл при необходимости
+            if [ -f "docker-compose.yml" ]; then
+              mv docker-compose.yml docker-compose.production.yml
+            fi
             
-            echo "Stopping old containers..."
-            sudo docker compose -f docker-compose.production.yml down
+            # Проверяем существование файла
+            if [ ! -f "docker-compose.production.yml" ]; then
+              echo "Error: docker-compose.production.yml not found!"
+              exit 1
+            fi
             
-            echo "Starting new containers..."
-            sudo docker compose -f docker-compose.production.yml up -d
-            
-            echo "Running migrations..."
-            sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate --noinput
-            
-            echo "Collecting static files..."
-            sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic --noinput
+            # Выполняем деплой
+            docker compose -f docker-compose.production.yml pull
+            docker compose -f docker-compose.production.yml down
+            docker compose -f docker-compose.production.yml up -d --build
+            docker compose -f docker-compose.production.yml exec backend python manage.py migrate
+            docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic --noinput
