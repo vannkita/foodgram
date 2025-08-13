@@ -20,6 +20,7 @@ per-file-ignores =
     api/__init__.py: I001,I003,I004,I005
     recipes/__init__.py: I001,I003,I004,I005
     users/__init__.py: I001,I003,I004,I005
+    settings.py: E402
 
 exclude = 
     migrations,
