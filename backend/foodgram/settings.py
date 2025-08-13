@@ -23,6 +23,8 @@ if DEBUG:
     ALLOWED_HOSTS.append('localhost')
     ALLOWED_HOSTS.append('127.0.0.1')
 
+AUTH_USER_MODEL = 'users.MyUser'
+
 # Application definition
 
 INSTALLED_APPS = [
