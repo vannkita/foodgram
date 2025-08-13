@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13.10
+    container_name: kittygram-db
+    restart: always
+    env_file: .env.production
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - kittygram-network
+
+  backend:
+    image: ${DOCKER_USERNAME}/kittygram_backend:latest
+    container_name: kittygram-backend
+    restart: always
+    env_file: .env.production
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    depends_on:
+      - db
+    networks:
+      - kittygram-network
+
+  frontend:
+    image: ${DOCKER_USERNAME}/kittygram_frontend:latest
+    container_name: kittygram-frontend
+    restart: always
+    networks:
+      - kittygram-network
+
+  gateway:
+    image: ${DOCKER_USERNAME}/kittygram_gateway:latest
+    container_name: kittygram-gateway
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - kittygram-network
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+networks:
+  kittygram-network:
+    driver: bridge
