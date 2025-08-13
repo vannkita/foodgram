@@ -44,6 +44,24 @@ class MyUser(AbstractUser):
         upload_to='users/avatars/',
         default=None,
         blank=True,
+        null=True,
+    )
+
+    groups = models.ManyToManyField(
+        'auth.Group',
+        verbose_name='Группы',
+        blank=True,
+        help_text='Группы, к которым принадлежит пользователь',
+        related_name='custom_user_set',
+        related_query_name='custom_user',
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        verbose_name='Права пользователя',
+        blank=True,
+        help_text='Конкретные права для этого пользователя',
+        related_name='custom_user_set',
+        related_query_name='custom_user',
     )
 
     class Meta:
