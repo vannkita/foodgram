@@ -3,12 +3,8 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from .constants import (
-    EMAIL_LEN_LIMIT,
-    FIRST_NAME_LEN_LIMIT,
-    LAST_NAME_LEN_LIMIT,
-    USERNAME_LEN_LIMIT,
-)
+from .constants import (EMAIL_LEN_LIMIT, FIRST_NAME_LEN_LIMIT,
+                        LAST_NAME_LEN_LIMIT, USERNAME_LEN_LIMIT)
 
 
 class MyUser(AbstractUser):

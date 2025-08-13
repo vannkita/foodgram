@@ -1,7 +1,5 @@
-from rest_framework.permissions import (SAFE_METHODS,
-                                        IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly
-                                        )
+from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 
 
 class CurrentUserOrAdminOrReadOnly(IsAuthenticatedOrReadOnly):

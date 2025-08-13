@@ -2,11 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from .constants import (
-    NAME_FIELD_LIMIT,
-    MIN_COOK_TIME,
-    MIN_INGREDIENT_QTY,
-)
+from .constants import MIN_COOK_TIME, MIN_INGREDIENT_QTY, NAME_FIELD_LIMIT
 
 User = get_user_model()
 
