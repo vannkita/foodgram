@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.db.models import QuerySet
 
 from .constants import ITEMS_ON_PAGE, MIN_INGREDIENT_QTY
 from .models import (
@@ -94,4 +93,3 @@ admin.site.register(Recipe, RecipeAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(ShoppingCart, ShoppingCartAdmin)
 admin.site.register(Favorite, FavoriteAdmin)
-

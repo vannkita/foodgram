@@ -13,11 +13,11 @@ from .constants import (
 
 class MyUser(AbstractUser):
     """Пользовательская модель с email в качестве логина."""
-    
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
-    username: models.CharField = models.CharField(
+    username = models.CharField(
         verbose_name='Уникальный юзернейм',
         max_length=USERNAME_LEN_LIMIT,
         unique=True,
@@ -30,24 +30,24 @@ class MyUser(AbstractUser):
             'unique': 'Пользователь с таким именем уже существует.',
         },
     )
-    first_name: models.CharField = models.CharField(
+    first_name = models.CharField(
         verbose_name='Имя',
-        max_length=FIRST_NAME_LEN_LIMIT
+        max_length=FIRST_NAME_LEN_LIMIT,
     )
-    last_name: models.CharField = models.CharField(
+    last_name = models.CharField(
         verbose_name='Фамилия',
-        max_length=LAST_NAME_LEN_LIMIT
+        max_length=LAST_NAME_LEN_LIMIT,
     )
-    email: models.EmailField = models.EmailField(
+    email = models.EmailField(
         verbose_name='Адрес электронной почты',
         unique=True,
-        max_length=EMAIL_LEN_LIMIT
+        max_length=EMAIL_LEN_LIMIT,
     )
-    avatar: models.ImageField = models.ImageField(
+    avatar = models.ImageField(
         verbose_name='Аватар',
         upload_to='users/avatars/',
         default=None,
-        blank=True
+        blank=True,
     )
 
     class Meta:
@@ -61,18 +61,18 @@ class MyUser(AbstractUser):
 
 class Subscribe(models.Model):
     """Подписка пользователя на другого пользователя."""
-    
-    user: models.ForeignKey = models.ForeignKey(
+
+    user = models.ForeignKey(
         MyUser,
         on_delete=models.CASCADE,
         related_name='subscriber',
-        verbose_name='Подписчик'
+        verbose_name='Подписчик',
     )
-    subscriptions: models.ForeignKey = models.ForeignKey(
+    subscriptions = models.ForeignKey(
         MyUser,
         on_delete=models.CASCADE,
         related_name='subscriptions',
-        verbose_name='Подписки'
+        verbose_name='Подписки',
     )
 
     class Meta:
@@ -81,8 +81,8 @@ class Subscribe(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'subscriptions'],
-                name='unique_user_subscriptions'
-            )
+                name='unique_user_subscriptions',
+            ),
         ]
 
     def clean(self) -> None:

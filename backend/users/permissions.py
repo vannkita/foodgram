@@ -1,4 +1,6 @@
-from rest_framework.permissions import SAFE_METHODS, IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import (SAFE_METHODS,
+                                        IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.request import Request
 from rest_framework.views import View
 
@@ -6,7 +8,10 @@ from rest_framework.views import View
 class CurrentUserOrAdmin(IsAuthenticated):
     """Доступ к объекту только для его автора или администратора."""
     def has_object_permission(self, request: Request, view: View, obj):
-        return request.user.is_staff or getattr(obj, 'author', None) == request.user
+        return (
+            request.user.is_staff
+            or getattr(obj, 'author', None) == request.user
+        )
 
 
 class CurrentUserOrAdminOrReadOnly(IsAuthenticatedOrReadOnly):

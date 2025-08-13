@@ -8,25 +8,30 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.status import (
-    HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, 
-    HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
+    HTTP_200_OK,
+    HTTP_201_CREATED,
+    HTTP_204_NO_CONTENT,
+    HTTP_400_BAD_REQUEST,
 )
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+from io import BytesIO
 
-from .filters import IngredientFilter, RecipeFilter
 from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
+from .filters import IngredientFilter, RecipeFilter
 from .pagination import CustomPagination
 from .permissions import CurrentUserOrAdmin, CurrentUserOrAdminOrReadOnly
 from .serializers import (
-    IngredientSerializer, RecipeReadSerializer, RecipeRecordSerializer,
-    RecipeSimpleSerializer, TagSerializer
+    IngredientSerializer,
+    RecipeReadSerializer,
+    RecipeRecordSerializer,
+    RecipeSimpleSerializer,
+    TagSerializer,
 )
-from io import BytesIO
 
 
 def create_shopping_list_file(shopping_cart):
-    """Функция для создания тестового файла со списком продуктов."""
+    """Функция для создания текстового файла со списком продуктов."""
     file = BytesIO()
     for ingredient in shopping_cart:
         file.write(
@@ -77,26 +82,35 @@ class RecipeViewSet(ModelViewSet):
         methods=['get'],
         detail=True,
         url_path='get-link',
-        permission_classes=(AllowAny,)
+        permission_classes=(AllowAny,),
     )
     def get_link(self, request, pk=None):
         """Генерация короткой ссылки для рецепта."""
         recipe = self.get_object()
         encoded_id = baseconv.base64.encode(recipe.id)
         short_link = request.build_absolute_uri(
-            reverse('short_link', kwargs={'encoded_id': encoded_id}))
+            reverse('short_link', kwargs={'encoded_id': encoded_id})
+        )
         return Response({"short-link": short_link}, status=HTTP_200_OK)
 
     @action(methods=['post', 'delete'], detail=True)
     def shopping_cart(self, request, pk=None):
         """Добавление/удаление рецепта в корзине покупок."""
-        handler = self.add_recipe_to if request.method == 'POST' else self.delete_recipe_from
+        handler = (
+            self.add_recipe_to
+            if request.method == 'POST'
+            else self.delete_recipe_from
+        )
         return handler(ShoppingCart, request.user, pk)
 
     @action(methods=['post', 'delete'], detail=True)
     def favorite(self, request, pk=None):
         """Добавление/удаление рецепта в избранное."""
-        handler = self.add_recipe_to if request.method == 'POST' else self.delete_recipe_from
+        handler = (
+            self.add_recipe_to
+            if request.method == 'POST'
+            else self.delete_recipe_from
+        )
         return handler(Favorite, request.user, pk)
 
     def add_recipe_to(self, model, user, pk):
@@ -104,13 +118,13 @@ class RecipeViewSet(ModelViewSet):
         if model.objects.filter(user=user, recipes_id=pk).exists():
             return Response(
                 {'errors': f'Рецепт {pk} уже добавлен в {model.__name__}.'},
-                status=HTTP_400_BAD_REQUEST
+                status=HTTP_400_BAD_REQUEST,
             )
         recipe = get_object_or_404(Recipe, pk=pk)
         model.objects.create(user=user, recipes=recipe)
         return Response(
-            RecipeSimpleSerializer(recipe).data, 
-            status=HTTP_201_CREATED
+            RecipeSimpleSerializer(recipe).data,
+            status=HTTP_201_CREATED,
         )
 
     def delete_recipe_from(self, model, user, pk):
@@ -119,7 +133,7 @@ class RecipeViewSet(ModelViewSet):
         if not obj.exists():
             return Response(
                 {'errors': f'Рецепт {pk} не найден в {model.__name__}.'},
-                status=HTTP_400_BAD_REQUEST
+                status=HTTP_400_BAD_REQUEST,
             )
         obj.delete()
         return Response(status=HTTP_204_NO_CONTENT)
@@ -127,24 +141,26 @@ class RecipeViewSet(ModelViewSet):
     @action(
         methods=['get'],
         detail=False,
-        permission_classes=[CurrentUserOrAdmin]
+        permission_classes=(CurrentUserOrAdmin,),
     )
     def download_shopping_cart(self, request):
         """Генерация файла со списком покупок."""
         user = request.user
-        shopping_cart = ShoppingCart.objects.filter(user=user).values(
-            'recipes__ingredients__name',
-            'recipes__ingredients__measurement_unit'
-        ).annotate(
-            amount=Sum('recipes__ingredients_list__amount')
-        ).order_by('recipes__ingredients__name')
-
+        shopping_cart = (
+            ShoppingCart.objects.filter(user=user)
+            .values(
+                'recipes__ingredients__name',
+                'recipes__ingredients__measurement_unit',
+            )
+            .annotate(amount=Sum('recipes__ingredients_list__amount'))
+            .order_by('recipes__ingredients__name')
+        )
         file = create_shopping_list_file(shopping_cart)
         return FileResponse(
             file,
             content_type='text/plain',
             as_attachment=True,
-            filename=f'{user}_shopping_list.txt'
+            filename=f'{user}_shopping_list.txt',
         )
 
 

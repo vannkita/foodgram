@@ -6,7 +6,13 @@ from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer
 from drf_extra_fields.fields import Base64ImageField
 
-from recipes.models import Ingredient, IngredientInRecipe, Recipe, Tag, Favorite, ShoppingCart
+from recipes.models import (Ingredient,
+                            IngredientInRecipe,
+                            Recipe,
+                            Tag,
+                            Favorite,
+                            ShoppingCart
+                            )
 from users.serializers import MyUserSerializer
 
 
@@ -58,7 +64,7 @@ class RecipeReadSerializer(ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'id', 'tags', 'author', 'ingredients', 
+            'id', 'tags', 'author', 'ingredients',
             'is_favorited', 'is_in_shopping_cart',
             'name', 'image', 'text', 'cooking_time'
         )
@@ -67,13 +73,15 @@ class RecipeReadSerializer(ModelSerializer):
         """Проверка наличия рецепта в корзине текущего пользователя."""
         user = self.context['request'].user
         return user.is_authenticated and ShoppingCart.objects.filter(
-            user=user, recipes=obj).exists()
+            user=user, recipes=obj
+        ).exists()
 
     def get_is_favorited(self, obj):
         """Проверка наличия рецепта в избранном текущего пользователя."""
         user = self.context['request'].user
         return user.is_authenticated and Favorite.objects.filter(
-            user=user, recipes=obj).exists()
+            user=user, recipes=obj
+        ).exists()
 
 
 class RecipeRecordSerializer(ModelSerializer):
@@ -86,13 +94,18 @@ class RecipeRecordSerializer(ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'ingredients', 'tags', 'author', 'image', 
+            'ingredients', 'tags', 'author', 'image',
             'name', 'id', 'text', 'cooking_time'
         )
 
     def validate(self, data):
         """Базовая валидация обязательных полей."""
-        required_fields = ('ingredients', 'tags', 'name', 'text', 'cooking_time')
+        required_fields = ('ingredients',
+                           'tags',
+                           'name',
+                           'text',
+                           'cooking_time'
+                           )
         for field in required_fields:
             if field not in data:
                 raise ValidationError(
@@ -165,7 +178,6 @@ class RecipeRecordSerializer(ModelSerializer):
         """Обновление рецепта с полной заменой связей."""
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
-        
         instance = super().update(instance, validated_data)
         instance.tags.set(tags)
         instance.ingredients.clear()

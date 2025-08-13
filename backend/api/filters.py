@@ -22,12 +22,16 @@ class RecipeFilter(FilterSet):
     def filter_favorite(self, queryset, name, value):
         """Фильтрация по наличию в избранном."""
         user = self.request.user
-        return queryset.filter(favorites__user=user) if value and user.is_authenticated else queryset
+        if value and user.is_authenticated:
+            return queryset.filter(favorites__user=user)
+        return queryset
 
     def filter_shopping_cart(self, queryset, name, value):
         """Фильтрация по наличию в корзине покупок."""
         user = self.request.user
-        return queryset.filter(shopping_cart__user=user) if value and user.is_authenticated else queryset
+        if value and user.is_authenticated:
+            return queryset.filter(shopping_cart__user=user)
+        return queryset
 
 
 class IngredientFilter(FilterSet):
