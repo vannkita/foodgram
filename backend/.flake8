@@ -1,0 +1,31 @@
+[flake8]
+max-line-length = 88
+ignore = 
+    # Игнорировать ошибки, связанные с инициализацией Django
+    F401,  # imported but unused
+    F403,  # 'from module import *' used
+    F405,  # name may be undefined
+    # Игнорировать ошибки в специфических файлах
+    I001,  # isort позиция импорта
+    I003,  # isort пустые строки в импортах
+    I004,  # isort неожиданная пустая строка
+    I005   # isort пропущенный импорт
+
+per-file-ignores =
+    # Полностью игнорировать manage.py
+    manage.py: ALL
+    # Игнорировать ошибки инициализации в __init__.py
+    */__init__.py: F401, F403, F405
+    # Игнорировать ошибки isort в проблемных модулях
+    api/__init__.py: I001,I003,I004,I005
+    recipes/__init__.py: I001,I003,I004,I005
+    users/__init__.py: I001,I003,I004,I005
+
+exclude = 
+    migrations,
+    __pycache__,
+    .venv,
+    venv,
+    .git,
+    .github,
+    node_modules
