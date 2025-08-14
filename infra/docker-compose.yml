@@ -48,8 +48,6 @@ services:
       dockerfile: Dockerfile
     container_name: foodgram-frontend
     restart: always
-    volumes:
-      - frontend_build:/usr/share/nginx/html
     networks:
       - foodgram-network
 
