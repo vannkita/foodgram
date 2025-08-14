@@ -41,15 +41,6 @@ services:
     networks:
       - foodgram-network
 
-  frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
-    container_name: foodgram-frontend
-    restart: always
-    networks:
-      - foodgram-network
-
   proxy:
     image: ${{ secrets.DOCKER_USERNAME }}/foodgram_proxy:latest
     container_name: foodgram-proxy
@@ -60,11 +51,28 @@ services:
       - static_volume:/app/staticfiles
       - media_volume:/app/media
       - /home/yc-user/foodgram/nginx/foodgram.conf:/etc/nginx/conf.d/foodgram.conf
+      - frontend_build:/usr/share/nginx/html
     depends_on:
       - backend
       - frontend
     networks:
       - foodgram-network
+  frontend:
+    image: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
+    container_name: foodgram-frontend
+    restart: always
+    volumes:
+      - frontend_build:/usr/share/nginx/html
+    networks:
+      - foodgram-network
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+  frontend_build:
+networks:
+  foodgram-network:
+    driver: bridge
 
 volumes:
   postgres_data:
