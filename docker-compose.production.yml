@@ -50,17 +50,16 @@ services:
     networks:
       - foodgram-network
 
-    proxy:
-      image: nginx:1.25.4-alpine
-      container_name: foodgram-proxy
-      restart: always
-      ports:
-        - "80:80"
-      volumes:
-        - ./nginx/foodgram.conf:/etc/nginx/conf.d/foodgram.conf
-        - static_volume:/app/staticfiles
-        - media_volume:/app/media
-        - frontend_build:/usr/share/nginx/html
+  proxy:
+    image: ${{ secrets.DOCKER_USERNAME }}/foodgram_proxy:latest
+    container_name: foodgram-proxy
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+      - /home/yc-user/foodgram/nginx/foodgram.conf:/etc/nginx/conf.d/foodgram.conf
     depends_on:
       - backend
       - frontend
