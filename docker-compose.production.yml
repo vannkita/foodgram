@@ -1,48 +1,35 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:14
     container_name: foodgram-db
     restart: always
-    environment:
-      POSTGRES_DB: foodgram_db
-      POSTGRES_USER: foodgram_user
-      POSTGRES_PASSWORD: foodgram_pass
+    env_file: .env.production
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - foodgram-network
-
   backend:
-    image: ваш_логин/foodgram_backend:latest
+    image: widvvm/foodgram_backend:latest
     container_name: foodgram-backend
     restart: always
-    working_dir: /app
+    env_file: .env.production
     depends_on:
       - db
-    environment:
-      DEBUG: "False"
-      SECRET_KEY: "ваш_секретный_ключ"
-      ALLOWED_HOSTS: "yc16sprint.ru,www.yc16sprint.ru,localhost,127.0.0.1"
-      CSRF_TRUSTED_ORIGINS: "http://yc16sprint.ru,http://www.yc16sprint.ru"
-      POSTGRES_DB: foodgram_db
-      POSTGRES_USER: foodgram_user
-      POSTGRES_PASSWORD: foodgram_pass
-      DB_HOST: db
-      DB_PORT: "5432"
     volumes:
       - static_volume:/app/staticfiles
       - media_volume:/app/media
-    command: >
-      sh -c "python manage.py migrate &&
-             python manage.py collectstatic --noinput &&
-             gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000"
     networks:
       - foodgram-network
-
+  frontend:
+    image: widvvm/foodgram_frontend:latest
+    container_name: foodgram-frontend
+    restart: always
+    volumes:
+      - frontend_build:/usr/share/nginx/html
+    networks:
+      - foodgram-network
   proxy:
-    image: ${{ secrets.DOCKER_USERNAME }}/foodgram_proxy:latest
+    image: widvvm/foodgram_proxy:latest
     container_name: foodgram-proxy
     restart: always
     ports:
@@ -57,28 +44,11 @@ services:
       - frontend
     networks:
       - foodgram-network
-  frontend:
-    image: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
-    container_name: foodgram-frontend
-    restart: always
-    volumes:
-      - frontend_build:/usr/share/nginx/html
-    networks:
-      - foodgram-network
 volumes:
   postgres_data:
   static_volume:
   media_volume:
   frontend_build:
-networks:
-  foodgram-network:
-    driver: bridge
-
-volumes:
-  postgres_data:
-  static_volume:
-  media_volume:
-
 networks:
   foodgram-network:
     driver: bridge

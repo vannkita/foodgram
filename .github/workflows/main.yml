@@ -193,10 +193,9 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: "docker-compose.production.yml,.env.production"
+          source: "docker-compose.production.yml,.env.production,nginx/foodgram.conf"
           target: "/home/${{ secrets.USER }}/foodgram/"
           overwrite: true
-      # Выполняем деплой
       - name: Deploy application
         uses: appleboy/ssh-action@v1.0.0
         with:
