@@ -173,17 +173,17 @@ jobs:
       # Создаем .env.production
       - name: Create .env.production
         run: |
-          cat << EOF > .env.production
+          cat << "EOF" > .env.production
           SECRET_KEY=${{ secrets.SECRET_KEY }}
-          DEBUG=False
+          DEBUG=${{ secrets.DEBUG }}
           POSTGRES_DB=${{ secrets.POSTGRES_DB }}
           POSTGRES_USER=${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-          DB_HOST=db
-          DB_PORT=5432
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
           DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
           DOMAIN=${{ secrets.DOMAIN }}
-          ALLOWED_HOSTS=${{ secrets.DOMAIN }},localhost,127.0.0.1
+          ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
           EOF
       # Копируем файлы на сервер
       - name: Copy files to server

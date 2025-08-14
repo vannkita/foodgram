@@ -1,2 +1,3 @@
 FROM nginx:1.25.4-alpine
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+RUN rm /etc/nginx/conf.d/default.conf
+COPY foodgram.conf /etc/nginx/conf.d/foodgram.conf
