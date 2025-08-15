@@ -1,18 +1,13 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db.transaction import atomic
-
 from drf_extra_fields.fields import Base64ImageField
+from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
+                            ShoppingCart, Tag)
 from rest_framework import serializers, status
 from rest_framework.fields import IntegerField, SerializerMethodField
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer
-
-from recipes.models import (Favorite,
-                            Ingredient,
-                            IngredientInRecipe,
-                            Recipe, ShoppingCart,
-                            Tag)
 from users.serializers import MyUserSerializer
 
 
