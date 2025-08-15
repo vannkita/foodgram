@@ -8,6 +8,8 @@ from rest_framework.fields import IntegerField, SerializerMethodField
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer
 from users.serializers import MyUserSerializer
+from django.conf import settings
+from rest_framework import serializers
 
 
 class TagSerializer(ModelSerializer):
@@ -53,7 +55,7 @@ class RecipeReadSerializer(ModelSerializer):
     ingredients = IngredientForRecipeReadSerializer(many=True, read_only=True)
     is_favorited = SerializerMethodField()
     is_in_shopping_cart = SerializerMethodField()
-    image = Base64ImageField()
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
@@ -63,6 +65,13 @@ class RecipeReadSerializer(ModelSerializer):
             'name', 'image', 'text', 'cooking_time'
         )
 
+    def get_image(self, obj):
+        if obj.image:
+            return (f'http://{settings.DOMAIN}{settings.MEDIA_URL}',
+                    f'{obj.image.name}')
+
+        return None
+    
     def get_is_in_shopping_cart(self, obj):
         """Проверка наличия рецепта в корзине текущего пользователя."""
         user = self.context['request'].user

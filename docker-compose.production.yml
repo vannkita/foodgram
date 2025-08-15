@@ -27,7 +27,7 @@ services:
   gateway:
     image: widvvm/foodgram_gateway:latest
     ports:
-      - "9000:80"
+      - "80:80"
     volumes:
       - static:/app/staticfiles/
       - media:/app/media/
