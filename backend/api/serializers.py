@@ -64,11 +64,9 @@ class RecipeReadSerializer(ModelSerializer):
             'name', 'image', 'text', 'cooking_time'
         )
 
-    def get_image(self, obj):
+    def get_image_url(self, obj):
         if obj.image:
-            return (f'http://{settings.DOMAIN}{settings.MEDIA_URL}',
-                    f'{obj.image.name}')
-
+            return self.context['request'].build_absolute_uri(obj.image.url)
         return None
 
     def get_is_in_shopping_cart(self, obj):
