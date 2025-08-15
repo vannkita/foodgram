@@ -22,21 +22,17 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     steps:
       - uses: actions/checkout@v3
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: 3.9
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install flake8==6.0.0 flake8-isort==6.0.0
           pip install -r ./backend/requirements.txt
-
       - name: Run backend tests and flake8
         env:
           POSTGRES_USER: foodgram_user
@@ -49,6 +45,23 @@ jobs:
           cd backend/
           python manage.py test
 
+  frontend_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 21
+      - name: Install frontend dependencies
+        run: |
+          cd frontend/
+          npm ci
+      - name: Run frontend tests
+        run: |
+          cd frontend/
+          npm run test
+
   build_and_push_backend:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -56,13 +69,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-buildx-action@v2
-
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
       - name: Build and push backend image
         uses: docker/build-push-action@v4
         with:
@@ -73,16 +84,15 @@ jobs:
   build_and_push_frontend:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    needs: frontend_tests
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-buildx-action@v2
-
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
       - name: Build and push frontend image
         uses: docker/build-push-action@v4
         with:
@@ -90,128 +100,55 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
 
-  build_and_push_proxy:
+  build_and_push_gateway:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-buildx-action@v2
-
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build and push proxy image
+      - name: Build and push gateway image
         uses: docker/build-push-action@v4
         with:
           context: ./nginx/
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_proxy:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_gateway:latest
 
   deploy:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    needs: backend_tests
+    needs:
+      - build_and_push_backend
+      - build_and_push_frontend
+      - build_and_push_gateway
     steps:
-      - uses: actions/checkout@v3
-      # Генерируем docker-compose.production.yml
-      - name: Generate compose file
-        run: |
-          cat << 'EOF' > docker-compose.production.yml
-          services:
-            db:
-              image: postgres:14
-              container_name: foodgram-db
-              restart: always
-              env_file: .env.production
-              volumes:
-                - postgres_data:/var/lib/postgresql/data
-              networks:
-                - foodgram-network
-            backend:
-              image: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
-              container_name: foodgram-backend
-              restart: always
-              env_file: .env.production
-              depends_on:
-                - db
-              volumes:
-                - static_volume:/app/staticfiles
-                - media_volume:/app/media
-              networks:
-                - foodgram-network
-            frontend:
-              image: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
-              container_name: foodgram-frontend
-              restart: always
-              networks:
-                - foodgram-network
-            proxy:
-              image: ${{ secrets.DOCKER_USERNAME }}/foodgram_proxy:latest
-              container_name: foodgram-proxy
-              restart: always
-              ports:
-                - "80:80"
-              volumes:
-                - static_volume:/app/staticfiles
-                - media_volume:/app/media
-              depends_on:
-                - backend
-                - frontend
-              networks:
-                - foodgram-network
-          volumes:
-            postgres_data:
-            static_volume:
-            media_volume:
-          networks:
-            foodgram-network:
-              driver: bridge
-          EOF
-      # Создаем .env.production
-      - name: Create .env.production
-        run: |
-          cat << "EOF" > .env.production
-          SECRET_KEY=${{ secrets.SECRET_KEY }}
-          DEBUG=${{ secrets.DEBUG }}
-          POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-          DB_HOST=${{ secrets.DB_HOST }}
-          DB_PORT=${{ secrets.DB_PORT }}
-          DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
-          DOMAIN=${{ secrets.DOMAIN }}
-          ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
-          EOF
-      # Копируем файлы на сервер
-      - name: Copy files to server
-        uses: appleboy/scp-action@v0.1.6
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Copy files via SSH
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: "docker-compose.production.yml,.env.production,nginx/foodgram.conf"
-          target: "/home/${{ secrets.USER }}/foodgram/"
-          overwrite: true
-      - name: Deploy application
-        uses: appleboy/ssh-action@v1.0.0
+          source: "docker-compose.production.yml,.env.production"
+          target: "~/foodgram"
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
-            cd /home/${{ secrets.USER }}/foodgram
-            # Устанавливаем права на .env
-            chmod 600 .env.production
-            # Деплоим приложение
+            cd ~/foodgram
             sudo docker compose -f docker-compose.production.yml pull
             sudo docker compose -f docker-compose.production.yml down
-            sudo docker compose -f docker-compose.production.yml up -d --build
+            sudo docker compose -f docker-compose.production.yml up -d
             sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
             sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic --noinput
-            # Очистка
             sudo docker system prune -af

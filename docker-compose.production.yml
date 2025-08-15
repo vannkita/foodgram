@@ -1,54 +1,42 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:14
-    container_name: foodgram-db
-    restart: always
-    env_file: .env.production
+    env_file:
+      - .env.production
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - foodgram-network
+      - pg_data:/var/lib/postgresql/data
+    restart: always
   backend:
     image: widvvm/foodgram_backend:latest
-    container_name: foodgram-backend
-    restart: always
-    env_file: .env.production
+    env_file:
+      - .env.production
+    volumes:
+      - static:/app/staticfiles/
+      - media:/app/media/
     depends_on:
       - db
-    volumes:
-      - static_volume:/app/staticfiles
-      - media_volume:/app/media
-    networks:
-      - foodgram-network
+    restart: always
   frontend:
     image: widvvm/foodgram_frontend:latest
-    container_name: foodgram-frontend
-    restart: always
     volumes:
-      - frontend_build:/usr/share/nginx/html
-    networks:
-      - foodgram-network
-  proxy:
-    image: widvvm/foodgram_proxy:latest
-    container_name: foodgram-proxy
+      - static:/app/build/static/
+      - ./frontend/build:/usr/share/nginx/html
     restart: always
+  gateway:
+    image: widvvm/foodgram_gateway:latest
     ports:
-      - "80:80"
+      - "9000:80"
     volumes:
-      - static_volume:/app/staticfiles
-      - media_volume:/app/media
-      - /home/yc-user/foodgram/nginx/foodgram.conf:/etc/nginx/conf.d/foodgram.conf
-      - frontend_build:/usr/share/nginx/html
+      - static:/app/staticfiles/
+      - media:/app/media/
     depends_on:
       - backend
       - frontend
-    networks:
-      - foodgram-network
+    restart: always
+
 volumes:
-  postgres_data:
-  static_volume:
-  media_volume:
-  frontend_build:
-networks:
-  foodgram-network:
-    driver: bridge
+  static:
+  media:
+  pg_data:

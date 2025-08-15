@@ -1,13 +1,8 @@
 FROM python:3.9
-
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 WORKDIR /app
-
 COPY requirements.txt .
-
-RUN pip install gunicorn==20.1.0
-
-RUN pip install -r requirements.txt --no-cache-dir
-
+RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY . .
-
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "foodgram.wsgi"]
+CMD ["gunicorn", "foodgram.wsgi:application", "--bind", "0.0.0.0:8000"]
