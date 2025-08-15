@@ -63,11 +63,6 @@ class RecipeReadSerializer(ModelSerializer):
             'name', 'image', 'text', 'cooking_time'
         )
 
-    def get_image_url(self, obj):
-        if obj.image:
-            return self.context['request'].build_absolute_uri(obj.image.url)
-        return None
-
     def get_is_in_shopping_cart(self, obj):
         """Проверка наличия рецепта в корзине текущего пользователя."""
         user = self.context['request'].user
