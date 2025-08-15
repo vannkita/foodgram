@@ -1,3 +1,9 @@
+Django==3.2.3
+djangorestframework==3.15.1
+djoser==2.2.3
+drf-extra-fields==3.7.0
+Pillow==9.3.0
+django-filter==23.1
 asgiref==3.9.1
 attrs==25.3.0
 certifi==2025.7.14
@@ -7,7 +13,6 @@ coreapi==2.3.3
 coreschema==0.0.4
 cryptography==45.0.5
 defusedxml==0.7.1
-Django==3.2.3
 django-templated-mail==1.1.1
 djangorestframework==3.12.4
 djangorestframework-simplejwt==4.8.0
