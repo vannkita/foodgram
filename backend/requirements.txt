@@ -14,9 +14,7 @@ coreschema==0.0.4
 cryptography==45.0.5
 defusedxml==0.7.1
 django-templated-mail==1.1.1
-djangorestframework==3.12.4
 djangorestframework-simplejwt==4.8.0
-djoser==2.1.0
 dotenv==0.9.9
 idna==3.10
 iniconfig==2.1.0
@@ -25,7 +23,6 @@ Jinja2==3.1.6
 MarkupSafe==3.0.2
 oauthlib==3.3.1
 packaging==25.0
-Pillow==9.0.0
 pluggy==0.13.1
 psycopg2-binary==2.9.3
 py==1.11.0
