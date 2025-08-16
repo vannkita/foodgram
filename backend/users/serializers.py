@@ -94,6 +94,6 @@ class SubscribeSerializer(MyUserSerializer):
         if limit:
             recipes = recipes[:int(limit)]
         serializer = RecipeForSubscriptionSerializer(
-            recipes, many=True, read_only=True
+            recipes, many=True, read_only=True, context=self.context
         )
         return serializer.data
