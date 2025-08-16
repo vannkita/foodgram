@@ -1,6 +1,5 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
-from django.core.exceptions import ValidationError
 from django.db import models
 
 from .constants import (EMAIL_LEN_LIMIT, FIRST_NAME_LEN_LIMIT,
@@ -98,4 +97,5 @@ class Subscribe(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.user.username} подписан на {self.subscriptions.username}'
+        return (f'{self.user.username}',
+                f'подписан на {self.subscriptions.username}')
