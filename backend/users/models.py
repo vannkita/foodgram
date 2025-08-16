@@ -14,7 +14,7 @@ class MyUser(AbstractUser):
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     username = models.CharField(
-        verbose_name='Уникальный юзернейм',
+        verbose_name='Никнейм',
         max_length=USERNAME_LEN_LIMIT,
         unique=True,
         help_text=(

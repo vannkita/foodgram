@@ -36,7 +36,7 @@ class Tag(models.Model):
         max_length=NAME_FIELD_LIMIT,
     )
     slug = models.SlugField(
-        'Слаг',
+        'Slug',
         unique=True,
         max_length=NAME_FIELD_LIMIT,
     )
@@ -54,19 +54,19 @@ class Recipe(models.Model):
     """Основная модель рецепта."""
     author = models.ForeignKey(
         User,
-        verbose_name='Автор рецепта',
+        verbose_name='Автор публикации (пользователь)',
         related_name='recipes',
         on_delete=models.CASCADE,
     )
     name = models.CharField(
-        'Название рецепта',
+        'Название',
         max_length=NAME_FIELD_LIMIT,
     )
     image = models.ImageField(
-        'Фото',
+        'Картинка',
         upload_to='recipes/images/',
     )
-    text = models.TextField('Описание приготовления')
+    text = models.TextField('Текстовое описание')
     ingredients = models.ManyToManyField(
         Ingredient,
         verbose_name='Используемые ингредиенты',
@@ -75,7 +75,7 @@ class Recipe(models.Model):
     )
     tags = models.ManyToManyField(
         Tag,
-        verbose_name='Теги рецепта',
+        verbose_name='Тег',
         related_name='recipes',
     )
     cooking_time = models.PositiveSmallIntegerField(
