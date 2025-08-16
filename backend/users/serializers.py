@@ -55,7 +55,6 @@ class RecipeForSubscriptionSerializer(ModelSerializer):
 
 
 class SubscribeSerializer(MyUserSerializer):
-    """Сериализатор для подписок."""
     recipes_count = SerializerMethodField()
     recipes = SerializerMethodField()
 
@@ -68,32 +67,19 @@ class SubscribeSerializer(MyUserSerializer):
         )
         read_only_fields = ('email', 'username', 'first_name', 'last_name',)
 
-    def validate(self, data):
-        subscriptions = self.instance
-        user = self.context.get('request').user
-        if Subscribe.objects.filter(
-                subscriptions=subscriptions, user=user).exists():
-            raise ValidationError(
-                message='Вы уже подписаны на этого пользователя.',
-                code=status.HTTP_400_BAD_REQUEST
-            )
-        if user == subscriptions:
-            raise ValidationError(
-                message='Вы не можете подписаться на самого себя.',
-                code=status.HTTP_400_BAD_REQUEST
-            )
-        return data
-
     def get_recipes_count(self, obj):
-        return obj.recipes.count()
+        """Возвращает количество рецептов пользователя."""
+        return obj.recipes.count()  # Предполагается, что у модели User есть related_name='recipes'
 
     def get_recipes(self, obj):
+        """Возвращает список рецептов пользователя с учетом параметра recipes_limit."""
         request = self.context.get('request')
-        limit = request.GET.get('recipes_limit')
-        recipes = obj.recipes.all()
+        limit = request.query_params.get('recipes_limit')
+        recipes = obj.recipes.all()  # Предполагается, что у модели User есть related_name='recipes'
         if limit:
-            recipes = recipes[:int(limit)]
-        serializer = RecipeForSubscriptionSerializer(
-            recipes, many=True, read_only=True
-        )
-        return serializer.data
+            try:
+                recipes = recipes[:int(limit)]
+            except ValueError:
+                pass
+        from recipes.serializers import RecipeSerializer  # Импортируйте ваш RecipeSerializer
+        return RecipeSerializer(recipes, many=True, context={'request': request}).data

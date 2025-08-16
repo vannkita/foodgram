@@ -74,19 +74,17 @@ class MyUser(AbstractUser):
 
 
 class Subscribe(models.Model):
-    """Подписка пользователя на другого пользователя."""
-
     user = models.ForeignKey(
         MyUser,
         on_delete=models.CASCADE,
-        related_name='subscriber',
-        verbose_name='Подписчик',
+        related_name='subscribers',
+        verbose_name='Подписчик'
     )
     subscriptions = models.ForeignKey(
         MyUser,
         on_delete=models.CASCADE,
         related_name='subscriptions',
-        verbose_name='Подписки',
+        verbose_name='Автор'
     )
 
     class Meta:
@@ -95,10 +93,9 @@ class Subscribe(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'subscriptions'],
-                name='unique_user_subscriptions',
-            ),
+                name='unique_subscription'
+            )
         ]
 
-    def clean(self) -> None:
-        if self.user == self.subscriptions:
-            raise ValidationError('Нельзя подписаться на самого себя.')
+    def __str__(self):
+        return f'{self.user.username} подписан на {self.subscriptions.username}'
