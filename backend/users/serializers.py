@@ -92,7 +92,11 @@ class SubscribeSerializer(MyUserSerializer):
         limit = request.GET.get('recipes_limit')
         recipes = obj.recipes.all()
         if limit:
-            recipes = recipes[:int(limit)]
+            try:
+                limit = int(limit)
+                recipes = recipes[:limit]
+            except (ValueError, TypeError):
+                pass
         serializer = RecipeForSubscriptionSerializer(
             recipes, many=True, read_only=True, context=self.context
         )
