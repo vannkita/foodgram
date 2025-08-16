@@ -20,9 +20,6 @@ services:
     restart: always
   frontend:
     image: widvvm/foodgram_frontend:latest
-    volumes:
-      - static:/app/build/static/
-      - ./frontend/build:/usr/share/nginx/html
     restart: always
   gateway:
     image: widvvm/foodgram_gateway:latest
