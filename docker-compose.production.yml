@@ -18,6 +18,9 @@ services:
     depends_on:
       - db
     restart: always
+  frontend:
+    image: widvvm/foodgram_frontend:latest
+    restart: always
   gateway:
     image: widvvm/foodgram_gateway:latest
     ports:
