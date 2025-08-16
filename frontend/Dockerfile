@@ -8,5 +8,5 @@ RUN npm run build
 FROM node:21.7.1-alpine
 WORKDIR /app
 COPY --from=build /app/build /app/build
-RUN npm install --global http-server
-CMD ["npx", "-y", "http-server", "-p", "8000", "--push-state", "/app/build"]
+RUN npm install --global http-server@latest
+CMD ["http-server", "/app/build", "-p", "8000", "--push-state"]
