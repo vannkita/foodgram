@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:14
+    env_file:
+      - .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    restart: always
+  backend:
+    image: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
+    env_file:
+      - .env
+    volumes:
+      - static:/app/static/
+      - media:/app/media/
+    depends_on:
+      - db
+    restart: always
+  frontend:
+    image: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
+    volumes:
+      - static:/usr/share/nginx/html/static/
+    restart: always
+  nginx:
+    image: ${{ secrets.DOCKER_USERNAME }}/foodgram_nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - static:/app/static/
+      - media:/app/media/
+    depends_on:
+      - backend
+      - frontend
+    restart: always
+volumes:
+  pg_data:
+  static:
+  media:

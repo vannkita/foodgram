@@ -1,8 +1,9 @@
-# build env
-FROM node:21.7.1-alpine
+FROM node:16 AS builder
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . ./
+COPY package.json package-lock.json ./
+RUN npm install --legacy-peer-deps
+COPY . .
 RUN npm run build
-CMD cp -r build result_build
+
+FROM nginx:1.19
+COPY --from=builder /app/build /usr/share/nginx/html
