@@ -2,19 +2,16 @@ from django.contrib.auth import authenticate, get_user_model
 from django.core.paginator import Paginator
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-
 from djoser.views import UserViewSet as DjoserUserViewSet
-
 from rest_framework import serializers, status
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.authtoken.models import Token
 
 from .models import Follow
 from .serializers import CustomUserCreateSerializer, CustomUserSerializer
-
 
 User = get_user_model()
 
