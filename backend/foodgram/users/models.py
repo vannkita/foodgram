@@ -1,4 +1,7 @@
-from django.contrib.auth.models import AbstractUser, UserManager as BaseUserManager
+from django.contrib.auth.models import (
+    AbstractUser,
+    UserManager as BaseUserManager
+)
 from django.db import models
 
 
@@ -16,7 +19,10 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
-        """Создает и сохраняет суперпользователя с указанным email и паролем."""
+        """
+        Создает и сохраняет суперпользователя
+        с указанным email и паролем.
+        """
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(email, password, **extra_fields)

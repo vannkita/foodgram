@@ -19,16 +19,17 @@ from django.urls import include, path
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import ensure_csrf_cookie
-from users.views import UsersViewSet
+
 
 @ensure_csrf_cookie
 def get_csrf_token(request):
     return JsonResponse({'csrfToken': get_token(request)})
 
+
 urlpatterns = [
     path('api/get-csrf-token/', get_csrf_token, name='get-csrf-token'),
     path('admin/', admin.site.urls),
-    path('api/users/', include('users.urls')),  # Custom user routes
-    path('api/auth/', include('djoser.urls.authtoken')),  # Только токены
+    path('api/users/', include('users.urls')),
+    path('api/auth/', include('djoser.urls.authtoken')),
     path('api/', include('recipes.urls')),
 ]

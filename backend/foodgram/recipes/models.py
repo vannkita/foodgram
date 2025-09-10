@@ -121,7 +121,9 @@ class RecipeIngredient(models.Model):
 
     def __str__(self):
         """Возвращает строковое представление ингредиента в рецепте."""
-        return f"{self.ingredient.name} ({self.amount} {self.ingredient.measurement_unit})"
+        return f"{self.ingredient.name} " \
+            f"({self.amount} " \
+            f"{self.ingredient.measurement_unit})"
 
 
 class Favorite(models.Model):

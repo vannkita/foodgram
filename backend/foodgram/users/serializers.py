@@ -64,7 +64,9 @@ class CustomUserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(f"Ошибка сериализации: {str(e)}")
 
     def get_is_subscribed(self, obj):
-        """Проверяет, подписан ли текущий пользователь на данного пользователя."""
+        """
+        Проверяет, подписан ли текущий пользователь на данного пользователя.
+        """
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
@@ -82,7 +84,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             return ShortRecipeSerializer(
                 queryset, many=True, context=self.context
             ).data
-        except Exception as e:
+        except Exception:
             return []
 
     def get_recipes_count(self, obj):

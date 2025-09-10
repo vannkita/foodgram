@@ -1,6 +1,8 @@
 import csv
+
 from django.core.management.base import BaseCommand
 from recipes.models import Ingredient
+
 
 class Command(BaseCommand):
     help = 'Импорт ингредиентов из CSV файла'
@@ -10,14 +12,20 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         csv_file = kwargs['csv_file']
-        self.stdout.write(self.style.SUCCESS(f'Импорт данных из {csv_file}...'))
+        self.stdout.write(
+            self.style.SUCCESS(f'Импорт данных из {csv_file}...')
+        )
         with open(csv_file, 'r', encoding='utf-8') as file:
             reader = csv.reader(file)
             for row in reader:
                 name, measurement_unit = row
                 Ingredient.objects.update_or_create(
                     name=name.strip(),
-                    defaults={'measurement_unit': measurement_unit.strip()}
+                    defaults={'measurement_unit': measurement_unit.strip()},
                 )
-                self.stdout.write(self.style.SUCCESS(f'Добавлен/обновлён: {name} ({measurement_unit})'))
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f'Добавлен/обновлён: {name} ({measurement_unit})'
+                    )
+                )
         self.stdout.write(self.style.SUCCESS('Импорт завершён!'))
