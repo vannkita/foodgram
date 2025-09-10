@@ -1,13 +1,9 @@
-FROM node:18
+FROM node:18 AS builder
 WORKDIR /app
-
-COPY package.json package.json
-COPY package-lock.json package-lock.json
-
-RUN npm ci
-
+COPY package.json package-lock.json ./
+RUN npm install --legacy-peer-deps
 COPY . .
 RUN npm run build
-RUN npm install --global http-server
 
-CMD ["npx", "-y", "http-server", "-p", "8000", "/app/build"]
+FROM nginx:1.19
+COPY --from=builder /app/build /usr/share/nginx/html
