@@ -104,10 +104,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_HTTPONLY = False
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost',
-    'http://127.0.0.1',
-]
+CSRF_TRUSTED_ORIGINS = ['http://yc16sprint.ru', 'http://51.250.26.27']
 
 ROOT_URLCONF = 'foodgram.urls'
 
