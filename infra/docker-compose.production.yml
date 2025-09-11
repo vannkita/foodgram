@@ -8,7 +8,7 @@ services:
       - pg_data:/var/lib/postgresql/data
     restart: always
   backend:
-    image: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
+    image: ${{ DOCKER_USERNAME }}/foodgram_backend:latest
     env_file:
       - .env
     volumes:
@@ -18,12 +18,12 @@ services:
       - db
     restart: always
   frontend:
-    image: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
+    image: ${{ DOCKER_USERNAME }}/foodgram_frontend:latest
     volumes:
       - static:/usr/share/nginx/html/static/
     restart: always
   nginx:
-    image: ${{ secrets.DOCKER_USERNAME }}/foodgram_nginx:latest
+    image: ${{ DOCKER_USERNAME }}/foodgram_nginx:latest
     ports:
       - "80:80"
     volumes:
