@@ -1,9 +1,9 @@
-FROM node:16 AS build
+FROM node:16
 WORKDIR /app
-COPY package*.json ./
-RUN npm install --legacy-peer-deps
+COPY package.json package.json
+COPY package-lock.json package-lock.json
+RUN npm ci --legacy-peer-deps
 COPY . .
 RUN npm run build
-
-FROM alpine:latest
-COPY --from=build /app/build /usr/share/nginx/html
+RUN npm install --global http-server
+CMD ["npx", "-y", "http-server", "-p", "3000", "/app/build"]
