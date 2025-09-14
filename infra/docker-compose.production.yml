@@ -7,7 +7,7 @@ services:
       - pg_data:/var/lib/postgresql/data
     restart: always
     networks:
-      - foodgram_network
+      - foodgram_default
   backend:
     image: ${DOCKER_USERNAME}/foodgram_backend:latest
     env_file:
@@ -19,14 +19,14 @@ services:
       - db
     restart: always
     networks:
-      - foodgram_network
+      - foodgram_default
   frontend:
     image: ${DOCKER_USERNAME}/foodgram_frontend:latest
     volumes:
-      - static:/usr/share/nginx/html/static/
+      - ./frontend/build:/usr/share/nginx/html
     restart: always
     networks:
-      - foodgram_network
+      - foodgram_default
   nginx:
     image: ${DOCKER_USERNAME}/foodgram_nginx:latest
     ports:
@@ -34,16 +34,17 @@ services:
     volumes:
       - static:/app/static/
       - media:/app/media/
+      - ./frontend/build:/usr/share/nginx/html
     depends_on:
       - backend
       - frontend
     restart: always
     networks:
-      - foodgram_network
+      - foodgram_default
 volumes:
   pg_data:
   static:
   media:
 networks:
-  foodgram_network:
+  foodgram_default:
     driver: bridge
