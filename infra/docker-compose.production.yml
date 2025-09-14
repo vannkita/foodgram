@@ -6,6 +6,8 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
     restart: always
+    networks:
+      - foodgram_network
   backend:
     image: ${DOCKER_USERNAME}/foodgram_backend:latest
     env_file:
@@ -16,11 +18,15 @@ services:
     depends_on:
       - db
     restart: always
+    networks:
+      - foodgram_network
   frontend:
     image: ${DOCKER_USERNAME}/foodgram_frontend:latest
     volumes:
       - static:/usr/share/nginx/html/static/
     restart: always
+    networks:
+      - foodgram_network
   nginx:
     image: ${DOCKER_USERNAME}/foodgram_nginx:latest
     ports:
@@ -32,7 +38,12 @@ services:
       - backend
       - frontend
     restart: always
+    networks:
+      - foodgram_network
 volumes:
   pg_data:
   static:
   media:
+networks:
+  foodgram_network:
+    driver: bridge
