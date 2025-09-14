@@ -97,6 +97,8 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
+          build-args: |
+            npm_install_args=--legacy-peer-deps
 
   build_and_push_nginx:
     if: github.ref == 'refs/heads/main'

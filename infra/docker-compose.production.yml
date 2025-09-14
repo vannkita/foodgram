@@ -23,7 +23,7 @@ services:
   frontend:
     image: ${DOCKER_USERNAME}/foodgram_frontend:latest
     volumes:
-      - ./frontend/build:/usr/share/nginx/html
+      - frontend_static:/usr/share/nginx/html
     restart: always
     networks:
       - foodgram_default
@@ -34,7 +34,7 @@ services:
     volumes:
       - static:/app/static/
       - media:/app/media/
-      - ./frontend/build:/usr/share/nginx/html
+      - frontend_static:/usr/share/nginx/html
     depends_on:
       - backend
       - frontend
@@ -45,6 +45,7 @@ volumes:
   pg_data:
   static:
   media:
+  frontend_static:
 networks:
   foodgram_default:
     driver: bridge
