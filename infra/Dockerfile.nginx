@@ -1,10 +1,12 @@
+FROM node:18-alpine AS frontend-build
+WORKDIR /app
+COPY frontend/package*.json ./
+RUN npm ci --legacy-peer-deps
+COPY frontend/ .
+RUN npm run build
+
+# 2) Nginx
 FROM nginx:1.25-alpine
-
-# ваш конфиг — в nginx.conf (вы его уже правили)
 COPY infra/nginx.conf /etc/nginx/nginx.conf
-
-# КЛЮЧЕВОЕ: положить сборку фронта в корень, что вы прописали в nginx.conf
-COPY frontend/build/ /usr/share/nginx/html/
-
-# Убрать дефолтный сайт, чтобы не было Welcome page
+COPY --from=frontend-build /app/build/ /usr/share/nginx/html/
 RUN rm -f /etc/nginx/conf.d/default.conf
