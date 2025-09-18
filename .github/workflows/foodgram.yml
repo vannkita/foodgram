@@ -114,7 +114,7 @@ jobs:
       - name: Build and push nginx image
         uses: docker/build-push-action@v6
         with:
-          context: ./infra/
+          context: .
           file: ./infra/Dockerfile.nginx
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_nginx:latest

@@ -29,14 +29,13 @@ services:
       - foodgram_default
   nginx:
     build:
-      context: ..
+      context: ..            # <— КОРЕНЬ РЕПО, а не ./infra
       dockerfile: infra/Dockerfile.nginx
     ports:
       - "80:80"
     depends_on:
       - backend
     volumes:
-      # общие тома для статики/медиа от бэкенда
       - static:/app/static
       - media:/app/media
 volumes:
