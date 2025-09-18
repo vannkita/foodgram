@@ -28,9 +28,7 @@ services:
     networks:
       - foodgram_default
   nginx:
-    build:
-      context: ..            # <— КОРЕНЬ РЕПО, а не ./infra
-      dockerfile: infra/Dockerfile.nginx
+    image: ${DOCKER_USERNAME}/foodgram_nginx:latest
     ports:
       - "80:80"
     depends_on:
