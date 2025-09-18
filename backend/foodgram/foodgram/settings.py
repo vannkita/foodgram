@@ -106,7 +106,8 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_HTTPONLY = False
-CSRF_TRUSTED_ORIGINS = ['http://yc16sprint.ru', 'http://51.250.26.27']
+CSRF_TRUSTED_ORIGINS = ['http://yc16sprint.ru', 'http://51.250.26.27',
+                        'https://yc16sprint.ru']
 
 ROOT_URLCONF = 'foodgram.urls'
 
@@ -163,7 +164,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = '/static/backend/'
+STATIC_URL = '/static/'
 STATIC_ROOT = '/app/static'
 
 MEDIA_URL = '/media/'

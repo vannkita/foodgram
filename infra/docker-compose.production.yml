@@ -28,18 +28,17 @@ services:
     networks:
       - foodgram_default
   nginx:
-    image: ${DOCKER_USERNAME}/foodgram_nginx:latest
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.nginx
     ports:
       - "80:80"
-    volumes:
-      - static:/app/static/
-      - media:/app/media/
     depends_on:
       - backend
-      - frontend
-    restart: always
-    networks:
-      - foodgram_default
+    volumes:
+      # общие тома для статики/медиа от бэкенда
+      - static:/app/static
+      - media:/app/media
 volumes:
   pg_data:
   static:
