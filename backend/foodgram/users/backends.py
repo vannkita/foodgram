@@ -1,9 +1,10 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import check_password
 
 User = get_user_model()
 
+
 class EmailBackend:
+
     def authenticate(self, request, email=None, password=None, **kwargs):
         if not email or not password:
             return None
