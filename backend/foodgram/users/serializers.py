@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.templatetags.static import static
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
@@ -51,9 +52,16 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'is_subscribed',
-            'avatar',
+            'avatar_url',
             'recipes',
             'recipes_count'
+        )
+
+    def get_avatar_url(self, obj):
+        return (
+            obj.avatar.url
+            if obj.avatar
+            else static("images/avatar-icon.png")
         )
 
     def to_representation(self, instance):

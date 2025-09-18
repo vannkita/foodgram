@@ -30,7 +30,6 @@ class User(AbstractUser):
     """Модель пользователя с дополнительными полями."""
     avatar = models.ImageField(
         upload_to='images/',
-        default='images/avatar-icon.png',
         null=True,
         blank=True
     )
