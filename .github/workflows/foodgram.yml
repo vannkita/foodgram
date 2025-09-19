@@ -132,12 +132,19 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      - name: Check docker-compose existence
-        run: |
-          ls -l docker-compose.production.yml || echo "docker-compose.production.yml not found"
-      - name: Test SSH connectivity
-        run: |
-          ssh -o StrictHostKeyChecking=no -T ${{ secrets.USER }}@${{ secrets.HOST }} || echo "SSH connection failed"
+
+      - name: Ensure target dir exists on server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          script: |
+            mkdir -p /home/${{ secrets.USER }}/foodgram
+            chmod 755 /home/${{ secrets.USER }}/foodgram
+            ls -ld /home/${{ secrets.USER }}/foodgram
+
       - name: Copy files to server
         uses: appleboy/scp-action@master
         with:
@@ -146,32 +153,5 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "docker-compose.production.yml"
-          target: "~/foodgram"
+          target: "/home/${{ secrets.USER }}/foodgram"
           debug: true
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          script: |
-            whoami
-            echo "Checking server connectivity and permissions"
-            mkdir -p ~/foodgram
-            chmod 755 ~/foodgram
-            cd ~/foodgram
-            echo "Checking files on server"
-            ls -l docker-compose.production.yml || echo "docker-compose.production.yml not found"
-            echo "Checking .env on server"
-            ls -l .env || echo ".env not found on server"
-            echo "Checking PostgreSQL credentials"
-            grep POSTGRES_ .env || echo "No POSTGRES_ variables in .env"
-            sudo docker compose -f docker-compose.production.yml pull
-            sudo docker compose -f docker-compose.production.yml down
-            sudo docker compose -f docker-compose.production.yml up -d
-            sleep 10
-            sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
-            sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic --noinput
-            sudo docker logs foodgram-db-1
-            sudo docker logs foodgram-backend-1
