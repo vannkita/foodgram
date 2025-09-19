@@ -132,6 +132,9 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+      - name: Check files existence
+        run: |
+          ls -l docker-compose.production.yml .env || echo "Files not found"
       - name: Copy files to server
         uses: appleboy/scp-action@master
         with:
@@ -150,8 +153,15 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             cd ~/foodgram
+            echo "Checking .env and docker-compose files"
+            ls -l docker-compose.production.yml .env
+            echo "Checking PostgreSQL credentials"
+            grep POSTGRES_ docker-compose.production.yml .env
             sudo docker compose -f docker-compose.production.yml pull
             sudo docker compose -f docker-compose.production.yml down
             sudo docker compose -f docker-compose.production.yml up -d
+            sleep 10  # Задержка для инициализации PostgreSQL
             sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
             sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic --noinput
+            sudo docker logs foodgram-db-1
+            sudo docker logs foodgram-backend-1
