@@ -14,7 +14,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends libpq-dev gcc \
  && rm -rf /var/lib/apt/lists/*
 
 # Затем ВЕСЬ проект
-# (manage.py и settings.py уже на месте, можно вызывать manage.py)
 COPY . .
 
 # Собираем статику во время билда образа

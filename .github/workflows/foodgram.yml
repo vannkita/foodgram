@@ -136,7 +136,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: "infra/docker-compose.production.yml,infra/.env"
+          source: "docker-compose.production.yml,.env"  # Изменено: root, не infra
           target: "~/foodgram"
       - name: Deploy via SSH
         uses: appleboy/ssh-action@master

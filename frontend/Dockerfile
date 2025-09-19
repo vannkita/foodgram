@@ -6,4 +6,4 @@ RUN npm ci --legacy-peer-deps
 COPY . .
 RUN npm run build
 RUN npm install --global http-server
-CMD ["npx", "-y", "http-server", "-p", "3000", "/app/build"]
+CMD ["npx", "-y", "http-server", "-p", "3000", "/app/build", "--push-state"]
