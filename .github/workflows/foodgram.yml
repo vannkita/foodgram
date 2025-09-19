@@ -135,6 +135,9 @@ jobs:
       - name: Check docker-compose existence
         run: |
           ls -l docker-compose.production.yml || echo "docker-compose.production.yml not found"
+      - name: Test SSH connectivity
+        run: |
+          ssh -o StrictHostKeyChecking=no -T ${{ secrets.USER }}@${{ secrets.HOST }} || echo "SSH connection failed"
       - name: Copy files to server
         uses: appleboy/scp-action@master
         with:
@@ -154,11 +157,12 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             whoami
-            echo "Checking server connectivity"
+            echo "Checking server connectivity and permissions"
             mkdir -p ~/foodgram
+            chmod 755 ~/foodgram
             cd ~/foodgram
             echo "Checking files on server"
-            ls -l docker-compose.production.yml
+            ls -l docker-compose.production.yml || echo "docker-compose.production.yml not found"
             echo "Checking .env on server"
             ls -l .env || echo ".env not found on server"
             echo "Checking PostgreSQL credentials"
