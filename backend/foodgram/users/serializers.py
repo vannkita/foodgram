@@ -7,6 +7,7 @@ from .models import Follow
 
 User = get_user_model()
 
+
 class CustomUserCreateSerializer(serializers.ModelSerializer):
     """Сериализатор для создания нового пользователя."""
     password = serializers.CharField(
@@ -33,6 +34,7 @@ class CustomUserCreateSerializer(serializers.ModelSerializer):
         """Создает нового пользователя с переданными данными."""
         user = User.objects.create_user(**validated_data)
         return user
+
 
 class CustomUserSerializer(serializers.ModelSerializer):
     """Сериализатор для работы с данными пользователя."""
