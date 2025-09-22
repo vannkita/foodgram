@@ -7,7 +7,6 @@ from .models import Follow
 
 User = get_user_model()
 
-
 class CustomUserCreateSerializer(serializers.ModelSerializer):
     """Сериализатор для создания нового пользователя."""
     password = serializers.CharField(
@@ -35,7 +34,6 @@ class CustomUserCreateSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
 
-
 class CustomUserSerializer(serializers.ModelSerializer):
     """Сериализатор для работы с данными пользователя."""
     is_subscribed = serializers.SerializerMethodField()
@@ -52,12 +50,12 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'is_subscribed',
-            'avatar_url',
+            'avatar',  # Заменили avatar_url на avatar
             'recipes',
             'recipes_count'
         )
 
-    def get_avatar_url(self, obj):
+    def get_avatar(self, obj):
         return (
             obj.avatar.url
             if obj.avatar
