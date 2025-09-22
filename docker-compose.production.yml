@@ -1,21 +1,22 @@
-version: '3.8'
-
 services:
   db:
-    image: postgres:13
+    image: postgres:14
+    container_name: foodgram-db-1
     env_file:
       - .env
     volumes:
       - pg_data:/var/lib/postgresql/data
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-django_user} -d ${POSTGRES_DB:-django_db}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-foodgram_user} -d ${POSTGRES_DB:-foodgram}"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 30s
 
   backend:
-    image: ${DOCKER_USERNAME}/kittygram_backend:latest
+    image: ${DOCKER_USERNAME}/foodgram_backend:latest
+    container_name: foodgram-backend-1
     env_file:
       - .env
     volumes:
@@ -27,23 +28,26 @@ services:
     restart: always
 
   frontend:
-    image: ${DOCKER_USERNAME}/kittygram_frontend:latest
-    # ПОРТЫ НЕ ПУБЛИКУЕМ — доступ только из сети compose
+    image: ${DOCKER_USERNAME}/foodgram_frontend:latest
+    container_name: foodgram-frontend-1
+    # порт наружу НЕ публикуем — nginx ходит к нему по внутренней сети
     restart: always
 
-  gateway:
-    image: ${DOCKER_USERNAME}/kittygram_gateway:latest
+  nginx:
+    image: ${DOCKER_USERNAME}/foodgram_nginx:latest
+    container_name: foodgram-nginx-1
     ports:
-      - "80:80"       # или "9000:80" если так нужно
-    volumes:
-      - static:/static/
-      - media:/media/
+      - "80:80"
     depends_on:
       - backend
       - frontend
+    volumes:
+      # чтобы nginx мог отдавать backend статику/медиа по alias
+      - static:/app/static/
+      - media:/app/media/
     restart: always
 
 volumes:
+  pg_data:
   static:
   media:
-  pg_data:

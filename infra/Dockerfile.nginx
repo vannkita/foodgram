@@ -1,3 +1,4 @@
 FROM nginx:1.25-alpine
-# Кладём готовый конфиг прямо в conf.d — без шаблонов и envsubst
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# наш конфиг кладём внутрь образа — на сервер ничего копировать не надо
+COPY infra/nginx.conf /etc/nginx/conf.d/default.conf
