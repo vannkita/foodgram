@@ -5,7 +5,7 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-# Устанавливаем curl вместе с зависимостями
+
 COPY requirements.txt .
 RUN apt-get update && apt-get install -y --no-install-recommends libpq-dev gcc curl \
  && pip install --no-cache-dir -r requirements.txt \

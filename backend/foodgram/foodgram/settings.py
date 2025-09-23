@@ -19,7 +19,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key')
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False').lower()
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 
@@ -83,14 +83,14 @@ DJOSER = {
         'level': 'DEBUG',
     },
 }
-AUTH_PASSWORD_VALIDATORS = []  # Отключены для тестирования
+AUTH_PASSWORD_VALIDATORS = []
 
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',  # 'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
