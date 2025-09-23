@@ -13,7 +13,6 @@ services:
       timeout: 5s
       retries: 10
       start_period: 30s
-
   backend:
     image: ${DOCKER_USERNAME}/foodgram_backend:latest
     container_name: foodgram-backend-1
@@ -26,12 +25,12 @@ services:
       db:
         condition: service_healthy
     restart: always
-
   frontend:
     image: ${DOCKER_USERNAME}/foodgram_frontend:latest
     container_name: foodgram-frontend-1
+    volumes:
+      - frontend_build:/app/build/
     restart: always
-
   nginx:
     image: ${DOCKER_USERNAME}/foodgram_nginx:latest
     container_name: foodgram-nginx-1
@@ -44,10 +43,11 @@ services:
     volumes:
       - static:/app/static/
       - media:/app/media/
+      - frontend_build:/app/build/
       - /etc/letsencrypt:/etc/letsencrypt:ro
     restart: always
-
 volumes:
   pg_data:
   static:
   media:
+  frontend_build:
