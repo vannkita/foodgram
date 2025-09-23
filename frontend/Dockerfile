@@ -5,7 +5,6 @@ COPY package-lock.json package-lock.json
 RUN npm ci --legacy-peer-deps
 COPY . .
 RUN npm run build
-# Добавьте это
 RUN cp build/index.html build/404.html
 RUN npm install --global http-server
 CMD ["npx", "-y", "http-server", "-p", "3000", "/app/build"]

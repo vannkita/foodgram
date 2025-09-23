@@ -30,7 +30,6 @@ services:
   frontend:
     image: ${DOCKER_USERNAME}/foodgram_frontend:latest
     container_name: foodgram-frontend-1
-    # порт наружу НЕ публикуем — nginx ходит к нему по внутренней сети
     restart: always
 
   nginx:
@@ -38,13 +37,14 @@ services:
     container_name: foodgram-nginx-1
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - backend
       - frontend
     volumes:
-      # чтобы nginx мог отдавать backend статику/медиа по alias
       - static:/app/static/
       - media:/app/media/
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     restart: always
 
 volumes:
