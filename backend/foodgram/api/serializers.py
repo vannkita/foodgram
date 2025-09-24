@@ -55,7 +55,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'is_subscribed',
-            'avatar',  # Заменили avatar_url на avatar
+            'avatar',
             'recipes',
             'recipes_count'
         )
