@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'recipes',
     'users',
+    'api',
     'djoser',
 ]
 AUTH_USER_MODEL = 'users.User'
@@ -68,9 +69,9 @@ DJOSER = {
     'USER_CREATE_PASSWORD_RETYPE': False,
     'SEND_ACTIVATION_EMAIL': False,
     'SERIALIZERS': {
-        'user_create': 'users.serializers.CustomUserCreateSerializer',
-        'user': 'users.serializers.CustomUserSerializer',
-        'current_user': 'users.serializers.CustomUserSerializer',
+        'user_create': 'api.serializers.CustomUserCreateSerializer',
+        'user': 'api.serializers.CustomUserSerializer',
+        'current_user': 'api.serializers.CustomUserSerializer',
     },
     'PERMISSIONS': {
         'user': ['rest_framework.permissions.AllowAny'],

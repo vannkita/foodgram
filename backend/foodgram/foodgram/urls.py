@@ -29,7 +29,7 @@ def get_csrf_token(request):
 urlpatterns = [
     path('api/get-csrf-token/', get_csrf_token, name='get-csrf-token'),
     path('admin/', admin.site.urls),
-    path('api/users/', include('users.urls')),
+    path('api/', include('api.urls')),
     path('api/auth/', include('djoser.urls.authtoken')),
     path('api/', include('recipes.urls')),
 ]
