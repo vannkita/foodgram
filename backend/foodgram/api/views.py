@@ -1,3 +1,8 @@
+from api.filters import IngredientFilter, RecipeFilter
+from api.serializers import (CustomUserCreateSerializer, CustomUserSerializer,
+                             IngredientSerializer, RecipeCreateSerializer,
+                             RecipeSerializer, ShortRecipeSerializer,
+                             TagSerializer)
 from django.contrib.auth import authenticate, get_user_model
 from django.core.paginator import Paginator
 from django.db.models import Sum
@@ -7,6 +12,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet as DjoserUserViewSet
+from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                            ShoppingCart, Tag)
 from rest_framework import serializers, status, viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
@@ -14,14 +21,6 @@ from rest_framework.permissions import (AllowAny, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from api.filters import IngredientFilter, RecipeFilter
-from api.serializers import (CustomUserCreateSerializer, CustomUserSerializer,
-                             IngredientSerializer, RecipeCreateSerializer,
-                             RecipeSerializer, ShortRecipeSerializer,
-                             TagSerializer)
-from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
-                            ShoppingCart, Tag)
 from users.models import Follow
 
 User = get_user_model()
