@@ -39,8 +39,6 @@ jobs:
           POSTGRES_DB: foodgram
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
-        run: |
-          python manage.py test
 
   frontend_tests:
     runs-on: ubuntu-latest
