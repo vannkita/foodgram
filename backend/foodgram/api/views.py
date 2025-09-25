@@ -12,19 +12,33 @@ from djoser.views import UserViewSet as DjoserUserViewSet
 from rest_framework import serializers, viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
-from rest_framework.permissions import (AllowAny, IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly
+)
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.filters import IngredientFilter, RecipeFilter
-from api.serializers import (CustomUserCreateSerializer, CustomUserSerializer,
-                             IngredientSerializer, RecipeCreateSerializer,
-                             RecipeSerializer, ShortRecipeSerializer,
-                             TagSerializer)
+from api.serializers import (
+    CustomUserCreateSerializer,
+    CustomUserSerializer,
+    IngredientSerializer,
+    RecipeCreateSerializer,
+    RecipeSerializer,
+    ShortRecipeSerializer,
+    TagSerializer
+)
 from foodgram.constants import DEFAULT_PAGE_SIZE
-from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
-                            ShoppingCart, Tag)
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    ShoppingCart,
+    Tag
+)
 from users.models import Follow
 
 User = get_user_model()
