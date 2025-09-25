@@ -18,7 +18,7 @@ class CustomUserManager(BaseUserManager):
 
     def create_superuser(self, email, password=None, **extra_fields):
         """
-        Создает и сохраняет суперпользователя
+        Создает и сохраняет суперпользователя 
         с указанным email и паролем.
         """
         extra_fields.setdefault('is_staff', True)
@@ -45,6 +45,11 @@ class User(AbstractUser):
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+        ordering = ['id']
+
+    def __str__(self):
+        """Возвращает строковое представление пользователя."""
+        return self.username or self.email
 
 
 class Follow(models.Model):
@@ -52,12 +57,14 @@ class Follow(models.Model):
     user = models.ForeignKey(
         User,
         related_name='follower',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь'
     )
     following = models.ForeignKey(
         User,
         related_name='following',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Подписан на'
     )
 
     class Meta:
@@ -69,3 +76,8 @@ class Follow(models.Model):
                 name='unique_follow'
             )
         ]
+        ordering = ['id']
+
+    def __str__(self):
+        """Возвращает строковое представление подписки."""
+        return f'{self.user} подписан на {self.following}'

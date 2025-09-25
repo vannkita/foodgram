@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
+from foodgram.constants import MAX_AMOUNT, MIN_AMOUNT
+
 User = get_user_model()
 
 
@@ -21,6 +23,7 @@ class Tag(models.Model):
     class Meta:
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
+        ordering = ['id']
 
     def __str__(self):
         """Возвращает строковое представление тега."""
@@ -44,10 +47,11 @@ class Ingredient(models.Model):
                 name='unique_ingredient'
             )
         ]
+        ordering = ['id']
 
     def __str__(self):
         """Возвращает строковое представление ингредиента."""
-        return f"{self.name} ({self.measurement_unit})"
+        return f'{self.name} ({self.measurement_unit})'
 
 
 class Recipe(models.Model):
@@ -72,8 +76,13 @@ class Recipe(models.Model):
         related_name='recipes',
         verbose_name='Теги'
     )
-    cooking_time = models.PositiveIntegerField(
-        validators=[MinValueValidator(1)],
+    cooking_time = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(MIN_AMOUNT),
+            MinValueValidator(
+                MAX_AMOUNT,
+                message='Время приготовления не может превышать 32,000 минут.')
+        ],
         verbose_name='Время приготовления (минуты)'
     )
     created_at = models.DateTimeField(
@@ -104,8 +113,13 @@ class RecipeIngredient(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Ингредиент'
     )
-    amount = models.PositiveIntegerField(
-        validators=[MinValueValidator(1)],
+    amount = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(MIN_AMOUNT),
+            MinValueValidator(
+                MAX_AMOUNT,
+                message='Количество не может превышать 32,000.')
+        ],
         verbose_name='Количество'
     )
 
@@ -118,12 +132,13 @@ class RecipeIngredient(models.Model):
                 name='unique_recipe_ingredient'
             )
         ]
+        ordering = ['id']
 
     def __str__(self):
         """Возвращает строковое представление ингредиента в рецепте."""
-        return f"{self.ingredient.name} " \
-            f"({self.amount} " \
-            f"{self.ingredient.measurement_unit})"
+        return f'{self.ingredient.name} ' \
+               f'({self.amount} ' \
+               f'{self.ingredient.measurement_unit})'
 
 
 class Favorite(models.Model):
@@ -150,10 +165,11 @@ class Favorite(models.Model):
                 name='unique_favorite'
             )
         ]
+        ordering = ['id']
 
     def __str__(self):
         """Возвращает строковое представление избранного."""
-        return f"{self.user} добавил {self.recipe} в избранное"
+        return f'{self.user} добавил {self.recipe} в избранное'
 
 
 class ShoppingCart(models.Model):
@@ -180,7 +196,8 @@ class ShoppingCart(models.Model):
                 name='unique_shopping_cart'
             )
         ]
+        ordering = ['id']
 
     def __str__(self):
         """Возвращает строковое представление списка покупок."""
-        return f"{self.user} добавил {self.recipe} в список покупок"
+        return f'{self.user} добавил {self.recipe} в список покупок'
