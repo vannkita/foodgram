@@ -1,9 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.templatetags.static import static
-
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
-
 from foodgram.constants import (
     MIN_AMOUNT,
     MAX_AMOUNT,
@@ -11,6 +9,7 @@ from foodgram.constants import (
     MAX_COOKING_TIME,
 )
 from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
+from users.models import Follow, User
 
 User = get_user_model()
 
