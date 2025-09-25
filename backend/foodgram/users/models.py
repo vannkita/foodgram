@@ -18,7 +18,7 @@ class CustomUserManager(BaseUserManager):
 
     def create_superuser(self, email, password=None, **extra_fields):
         """
-        Создает и сохраняет суперпользователя 
+        Создает и сохраняет суперпользователя
         с указанным email и паролем.
         """
         extra_fields.setdefault('is_staff', True)

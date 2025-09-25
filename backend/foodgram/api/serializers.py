@@ -3,9 +3,7 @@ from django.templatetags.static import static
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
-from foodgram.constants import (MAX_AMOUNT,
-                                MAX_COOKING_TIME,
-                                MIN_AMOUNT,
+from foodgram.constants import (MAX_AMOUNT, MAX_COOKING_TIME, MIN_AMOUNT,
                                 MIN_COOKING_TIME)
 from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
 
