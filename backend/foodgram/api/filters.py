@@ -2,6 +2,7 @@ from django_filters.rest_framework import CharFilter, FilterSet, filters
 
 from recipes.models import Ingredient, Recipe, Tag
 
+
 class RecipeFilter(FilterSet):
     """Фильтр для рецептов по тегам, автору, избранному и списку покупок."""
     tags = filters.ModelMultipleChoiceFilter(
