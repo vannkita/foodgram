@@ -55,6 +55,7 @@ docker-compose exec backend python manage.py import_ingredients
 
 Админ-панель Django доступна по адресу /admin/. Через нее можно:
 
+
 Управлять пользователями
 Добавлять/удалять теги
 Модерировать рецепты
@@ -72,3 +73,5 @@ foodgram/
 Проект разработан в рамках учебного курса.
 
 Сайт доступен по адресу: yc16sprint.ru
+
+Логин/пароль от /admin - admin:admin
