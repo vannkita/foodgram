@@ -63,6 +63,7 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
 }
 
+APPEND_SLASH = True
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
