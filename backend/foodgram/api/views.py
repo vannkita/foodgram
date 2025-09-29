@@ -340,7 +340,7 @@ class LoginSerializer(serializers.Serializer):
         password = data.get('password')
         user = authenticate(
             request=self.context['request'],
-            username=email,
+            email=email,
             password=password
         )
         if user is None:
